@@ -6,13 +6,13 @@
 #    By: maraasve <maraasve@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/03 13:21:46 by marieke           #+#    #+#              #
-#    Updated: 2023/11/28 14:43:29 by maraasve         ###   ########.fr        #
+#    Updated: 2024/02/16 15:43:11 by maraasve         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -fPIC
 AR = ar -rcs
 
 SOURCES = \
@@ -22,23 +22,37 @@ SOURCES = \
 	ft_strrchr.c ft_strncmp.c ft_memchr.c ft_memcmp.c ft_strnstr.c ft_atoi.c \
 	ft_calloc.c ft_strdup.c ft_substr.c ft_strjoin.c ft_strtrim.c ft_split.c \
 	ft_itoa.c ft_strmapi.c ft_striteri.c ft_putchar_fd.c ft_putstr_fd.c \
-	ft_putendl_fd.c ft_putnbr_fd.c ft_abs.c ft_realloc.c
+	ft_putendl_fd.c ft_putnbr_fd.c ft_abs.c ft_realloc.c ft_strlcpy_esc.c
 BSOURCES = \
 	ft_lstnew.c ft_lstadd_front.c ft_lstsize.c ft_lstlast.c ft_lstadd_back.c \
 	ft_lstdelone.c ft_lstclear.c ft_lstiter.c ft_lstmap.c
-OBJECTS = $(SOURCES:.c=.o)
-BOBJECTS = $(BSOURCES:.c=.o)
+OBJECTS_DIR = obj
+OBJECTS = $(addprefix $(OBJECTS_DIR)/, $(SOURCES:.c=.o))
+BOBJECTS_DIR = obj_bonus
+BOBJECTS = $(addprefix $(BOBJECTS_DIR)/, $(BSOURCES:.c=.o))
 
+all: $(NAME)
+
+$(OBJECTS_DIR)/%.o: %.c | $(OBJECTS_DIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(BOBJECTS_DIR)/%.o: %.c | $(BOBJECTS_DIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
+	
 $(NAME): $(OBJECTS)
 	@$(AR) $@ $?
-
-all: $(NAME) bonus
 
 bonus: $(OBJECTS) $(BOBJECTS)
 	@$(AR) $(NAME) $?
 
+$(OBJECTS_DIR):
+	@mkdir -p $(OBJECTS_DIR)
+
+$(BOBJECTS_DIR):
+	@mkdir -p $(BOBJECTS_DIR)
+
 clean:
-	@rm -f $(OBJECTS) $(BOBJECTS)
+	@rm -rf $(OBJECTS_DIR) $(BOBJECTS_DIR)
 
 fclean: clean
 	@rm -f $(NAME)

@@ -5,61 +5,55 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: maraasve <maraasve@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/20 11:11:00 by marieke           #+#    #+#             */
-/*   Updated: 2023/12/30 14:59:38 by maraasve         ###   ########.fr       */
+/*   Created: 2024/01/04 16:37:02 by marieke           #+#    #+#             */
+/*   Updated: 2024/02/16 15:20:00 by maraasve         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 # define PIPEX_H
 
-/*write, execve, acces*/
-# include <unistd.h>
-
-/*prinf DEBUGGING DELETE THISSSSS*/
-# include <stdio.h>
-
 /*open flags*/
 # include <fcntl.h>
 
-/*waitpid*/
-# include <sys/wait.h>
+/*malloc*/
+# include <stdlib.h>
 
-/*error handling*/
-# include <errno.h>
+/*write, access*/
+# include <unistd.h>
+
+/*perror*/
+# include <stdio.h>
+
+/*wait*/
+# include <sys/wait.h>
 
 /*libft*/
 # include "libft/libft.h"
 
-/*error messages*/
-# define ERR_ARGS "Error: Invalid number of arguments\n"
-# define ERR_PATHS "Error: Can't find paths\n"
-# define ERR_CMDS "Error: Couldn't find commands\n"
+# define INPUT_ERR "Invalid number of arguments.\n"
+# define PATH_ERR "Path not found.\n"
+# define CMD_ERR "Command not found.\n"
 
 typedef struct s_pipex
 {
+	int		in_fd;
+	int		out_fd;
 	int		pipe[2];
-	int		pid1;
-	int		pid2;
-	int		infile;
-	int		outfile;
-	char	*paths;
-	char	**paths_array;
+	int		pid_index;
+	int		exit_status;
+	char	*path;
+	char	**path_array;
 	char	*cmd;
 	char	**cmd_args;
+	int		*pid;
 }	t_pipex;
 
-/*pipex.c*/
-char	*get_path(char *envp[]);
-
-/*utils.c*/
-int		err_msg(char *error);
-void	free_parent(t_pipex *pipex);
+int		err_msg(char *msg);
 void	free_child(t_pipex *pipex);
-
-/*childs.c*/
-char	*get_cmd(char	**paths_array, char *cmd);
-void	first_child(t_pipex pipex, char *argv[], char *envp[]);
-void	second_child(t_pipex pipex, char *argv[], char *envp[]);
+void	free_parent(t_pipex *pipex);
+char	*get_path(char *envp[]);
+char	*get_command(char **paths_array, char *cmd);
+void	close_parent_pipes(t_pipex *pipex);
 
 #endif
