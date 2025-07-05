@@ -3,25 +3,29 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: maraasve <maraasve@student.42.fr>          +#+  +:+       +#+         #
+#    By: marieke <marieke@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/04 15:14:38 by marieke           #+#    #+#              #
-#    Updated: 2024/02/16 15:20:07 by maraasve         ###   ########.fr        #
+#    Updated: 2025/07/05 16:35:42 by marieke          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
-AR = ar -rcs
+CFLAGS = -Wall -Werror -Wextra -isystem $(INCL_DIR) -isystem $(LIBFT_INCL_DIR)
 LIBFT_DIR = ./libft
 LIBFT_NAME = $(LIBFT_DIR)/libft.a
+LIBFT_INCL_DIR = libft/incl
 RM = rm -rf
 
-SRC = pipex.c utils.c utils2.c
+SRC = pipex.c utils.c free.c
+
+SRC_DIR = src
+INCL_DIR = incl
 OBJ_DIR = obj
-OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))
-OBJ_BONUS = $(addprefix $(OBJ_BONUS_DIR)/,$(SRC_BONUS:.c=.o))
+
+SRCS = $(addprefix $(SRC_DIR)/, $(SRC))
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 all: $(NAME)
 
@@ -31,9 +35,7 @@ $(NAME): $(LIBFT_NAME) $(OBJ)
 $(LIBFT_NAME):
 	@make -C $(LIBFT_DIR)
 
-bonus: all
-
-$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o:$(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR):
